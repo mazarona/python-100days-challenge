@@ -30,10 +30,14 @@ resources = {
     "coffee": 100,
 }
 
+required_drink = ""
+profit = 0
+
 
 def print_report():
-    for res, val in resources.items():
-        print(res, "\b:", val)
+    for res in resources:
+        print(f"{res}: {resources[res]}")
+    print(f"money: {profit}")
 
 
 def check_resources():
@@ -46,25 +50,32 @@ def check_resources():
 
 
 def proc_coins():
+    """Returns the total money iserted by the user"""
     print("Please insert coins.")
-    quarters = int(input("How many quarters?: "))
-    dimes = int(input("How many dimes?: "))
-    nickles = int(input("How many nickles?: "))
-    pennies = int(input("How many pennies?: "))
-    total = quarters * 0.25 + dimes * 0.1 + nickles * 0.05 + pennies * 0.01
-    if total < MENU[required_drink]["cost"]:
-        print("Sorry that's not enough money. Money refunded")
+    total = int(input("How many quarters?: ")) * 0.25
+    total += int(input("How many dimes?: ")) * 0.1
+    total += int(input("How many nickles?: ")) * 0.05
+    total += int(input("How many pennies?: ")) * 0.01
+    return total
+
+
+def is_transaction_successful(payment):
+    """Return True if the transaction is accepted and false otherwise"""
+    drink_cost = MENU[required_drink]["cost"]
+    if payment < drink_cost:
+        print("Sorry that's not enough money. Money refunded.")
         return False
-    global profit
-    profit += total
+    else:
+        change = round(payment - drink_cost, 2)
+        print(f"Here is ${change} in change.")
+        global profit
+        profit += drink_cost
+        return True
 
-def is_transaction_successful(payment, MENU[required_drink]["cost"]):
 
-
-
-
-required_drink = ""
-profit = 0
+def make_coffee():
+    for ing in MENU[required_drink]["ingredients"]:
+        resources[ing] -= MENU[required_drink]["ingredients"][ing]
 
 
 while True:
@@ -77,6 +88,7 @@ while True:
         required_drink = user_input
         if check_resources():
             payment = proc_coins()
-
-        else:
-            break
+            if is_transaction_successful(payment):
+                make_coffee()
+    else:
+        print("Sorry. Invalid input")
