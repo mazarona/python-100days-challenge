@@ -76,6 +76,7 @@ def is_transaction_successful(payment):
 def make_coffee():
     for ing in MENU[required_drink]["ingredients"]:
         resources[ing] -= MENU[required_drink]["ingredients"][ing]
+    print(f"Here is your {required_drink}")
 
 
 while True:
